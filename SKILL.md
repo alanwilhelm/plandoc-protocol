@@ -1,6 +1,6 @@
 ---
 name: plandoc-protocol
-description: Document-first plandoc protocol for planning work: create seed refine review activate implement and resolve plandocs, author/review design docs, run protocol sync, and drive RFC/ADR decisions.
+description: "Document-first plandoc protocol for planning work: create seed refine review activate implement and resolve plandocs, author/review design docs, run protocol sync, and drive RFC/ADR decisions."
 ---
 
 # Plandoc Protocol (Optimized)
