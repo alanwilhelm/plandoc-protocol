@@ -1,0 +1,7 @@
+interface:
+  display_name: "Plandoc Protocol"
+  short_description: "Strict staged plandoc workflow"
+  default_prompt: "Use $plandoc-protocol-optimized to create, refine, review, activate, implement, and resolve plandocs with strict stage anchoring."
+
+policy:
+  allow_implicit_invocation: true
