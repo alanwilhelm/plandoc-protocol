@@ -1,5 +1,5 @@
 ---
-name: plandoc-protocol-optimized
+name: plandoc-protocol
 description: High-effectiveness Plandoc + Design Doc protocol for planning, deep-refining, refiling legacy doc spaces, and executing plan state transitions with approval gates.
 ---
 
