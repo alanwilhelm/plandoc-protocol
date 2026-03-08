@@ -1,6 +1,6 @@
 ---
 name: plandoc-protocol
-description: High-effectiveness Plandoc + Design Doc protocol for planning, deep-refining, refiling legacy doc spaces, and executing plan state transitions with approval gates.
+description: Document-first plandoc protocol for planning work: create seed refine review activate implement and resolve plandocs, author/review design docs, run protocol sync, and drive RFC/ADR decisions.
 ---
 
 # Plandoc Protocol (Optimized)
