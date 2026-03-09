@@ -51,8 +51,28 @@ Before editing or moving docs, classify each artifact:
 
 - Put it in `docs/plans/` if it is primarily about execution state, verification, sequencing, and delivery.
 - Put it in `docs/design/` if it is primarily about architecture, strategy, constraints, or decisions.
+- If the intake is primarily a goal, initiative, epic, or architecture/tradeoff question, start with a design doc before creating execution plandocs.
 
 Do not leave active plandocs directly in `docs/plans/` root unless repo-local protocol explicitly says so.
+
+## Intake Patterns
+
+When new work lands, choose the smallest artifact that truthfully matches the request:
+
+- `Bug` - broken behavior, regression, incorrect output, failed workflow, or reliability issue.
+- `Case` - support, customer, operator, or one-off fulfillment/investigation request. If the case reveals systemic product or infra work, create linked `Bug`, `Task`, or `Feature` plandocs.
+- `Feature` - new capability or material behavior change with a clear user-facing or operator-facing outcome.
+- `Task` - bounded maintenance, cleanup, migration, upgrade, documentation, or operational work without a major product-surface change.
+- `Research` - the problem is real, but the solution or scope is not yet known. Use it to discover the next executable work.
+- `Runbook` - repeatable operational procedure, incident-response flow, migration execution guide, or support playbook.
+- `Decision` - the primary output is a durable policy, ruling, or choice that needs to be recorded.
+- Goal / initiative / epic - start with a design doc or roadmap/reference doc, then split execution into linked plandocs.
+
+Rules of thumb:
+
+- One support request can produce multiple linked artifacts: a `Case` for fulfillment plus a `Bug` or `Feature` for systemic follow-up.
+- One goal should not become a fuzzy omnibus plandoc. Split design/strategy from execution.
+- Use one primary plandoc per bounded unit of delivery.
 
 ## Folder Layout (Canonical)
 
@@ -213,6 +233,17 @@ For any change beyond trivial:
 - verification steps: exact commands + expected results
 - rollback: safe revert path
 - risks: what can break and blast radius
+
+## Priority And Severity
+
+- `Priority` applies to every plandoc.
+- `Severity` applies to `Bug` only.
+- `P0` - requires immediate active handling because the business, user, or operational impact is severe right now.
+- `P1` - important and should be scheduled soon; materially affects delivery, users, or operators.
+- `P2` - worthwhile backlog work; useful, but not urgent.
+- `S1` - outage, security issue, data loss/corruption, billing failure, or core workflow broken with no acceptable workaround.
+- `S2` - serious degradation or incorrect behavior with limited workaround or reduced trust.
+- `S3` - minor bug, edge case, cosmetic issue, or low-blast-radius defect with acceptable workaround.
 
 ## Deep Refine (Required For Non-Trivial Work)
 
