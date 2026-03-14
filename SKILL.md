@@ -1,6 +1,6 @@
 ---
 name: plandoc-protocol
-description: High-effectiveness Plandoc + Design Doc protocol for planning, deep-refining, refiling legacy doc spaces, and executing plan state transitions with approval gates.
+description: High-effectiveness Plandoc + Design Doc protocol for planning, deep-refining, refiling legacy doc spaces, executing plan state transitions with approval gates, and installing repo-local coherence scaffolds.
 ---
 
 # Plandoc Protocol (Optimized)
@@ -19,12 +19,25 @@ This protocol is a state machine for work, backed by structured docs:
 - a repo has legacy docs that need to be refactored into a cleaner plan/design layout
 - work is large, risky, multi-step, or needs auditability
 - a plan needs review, refinement, activation, implementation, verification, or state movement
+- a repo needs the local coherence scaffold installed so plandocs, design docs, indices, and root control docs reinforce each other
+
+## Repo Coherence Bootstrap
+
+When the user wants a repository to have the same level of repo-local plandoc coherence, read
+`references/repo_coherence.md` and use:
+
+```bash
+python3 scripts/install_repo_coherence.py --repo-root /path/to/repo --project-name ProjectName
+```
+
+Use `--force` only when replacing an existing scaffold intentionally.
 
 ## Prime Directive
 
 - Prefer provable correctness over speed when risk is real.
 - Prefer speed when work is low-risk and reversible.
 - Every required section must be filled or explicitly `N/A — reason`.
+- Plans and design docs must optimize for structurally deterministic outcomes: if two competent implementers could follow the same approved doc and produce materially different architecture or behavior, the doc is under-specified.
 
 ## Execution Standard
 
@@ -33,6 +46,7 @@ This protocol is a state machine for work, backed by structured docs:
 - Anchor every plandoc in a single explicit stage so the current position and next valid move are deterministic.
 - Apply meticulous attention to detail in structure, wording, style, and technical correctness.
 - Use full-spectrum analysis: current state, root problem, constraints, risks, solution shape, verification, rollback, and follow-through.
+- Drive ambiguity out of plans aggressively enough that implementation shape, boundaries, and critical behavior converge across independent executions.
 - Do not blur plan state, implementation state, design intent, or evidence.
 - Do not mark a plan as more complete, more certain, or more correct than the underlying evidence supports.
 
@@ -45,14 +59,51 @@ This protocol is a state machine for work, backed by structured docs:
 
 If repo-local rules conflict with this skill, follow the repo-local rules unless the user asks to change the protocol itself.
 
+## Multi-Agent Boundary
+
+When a manager agent is supervising multiple workers:
+
+- this skill owns plandoc correctness, state movement, and plan/design structure
+- a separate team-management skill should own:
+  - worker assignment
+  - progress supervision
+  - Discord or chat coordination
+  - SSH, GitHub, or deployment intervention
+
+Do not turn this skill into a generic fleet or team manager. Use it as the workflow/state machine
+that a manager or lead enforces across workers.
+
 ## Classify First
 
 Before editing or moving docs, classify each artifact:
 
 - Put it in `docs/plans/` if it is primarily about execution state, verification, sequencing, and delivery.
 - Put it in `docs/design/` if it is primarily about architecture, strategy, constraints, or decisions.
+- If the intake is primarily an unresolved goal, initiative, epic, or architecture/tradeoff question, establish the design truth first, then create linked plandocs for execution work.
 
 Do not leave active plandocs directly in `docs/plans/` root unless repo-local protocol explicitly says so.
+
+## Intake Patterns
+
+When new work lands, choose the smallest artifact that truthfully matches the request.
+
+Allowed plandoc `Type` values:
+
+- `Bug` - broken behavior, regression, incorrect output, failed workflow, or reliability issue.
+- `Case` - support, customer, operator, or one-off fulfillment/investigation request. If the case reveals systemic product or infra work, create linked `Bug`, `Task`, or `Feature` plandocs.
+- `Feature` - new capability or material behavior change with a clear user-facing or operator-facing outcome.
+- `Task` - bounded maintenance, cleanup, migration, upgrade, documentation, or operational work without a major product-surface change.
+- `Research` - the problem is real, but the solution or scope is not yet known. Use it to discover the next executable work.
+- `Runbook` - repeatable operational procedure, incident-response flow, migration execution guide, or support playbook.
+- `Decision` - the primary output is a durable policy, ruling, or choice that needs to be recorded.
+- `Milestone` - umbrella execution plan that coordinates a bounded set of linked subplans.
+
+Rules of thumb:
+
+- One support request can produce multiple linked artifacts: a `Case` for fulfillment plus a `Bug` or `Feature` for systemic follow-up.
+- One goal should not become a fuzzy omnibus plandoc. Split design or strategy from execution.
+- Use one primary plandoc per bounded unit of delivery.
+- Use `Research` only when the real next executable work is still unknown.
 
 ## Folder Layout (Canonical)
 
@@ -206,6 +257,84 @@ For research, protocol sync, or docs-only work with no implementation phase:
 - `Active` -> current adopted design
 - `Archived` -> historical or superseded
 
+### Design Stage Anchoring (Required)
+
+Every design doc must be anchored in exactly one current state.
+
+- Do not leave a design doc "between states" or implied by prose alone.
+- The header `State`, folder placement, and `docs/design/_index.md` entries must agree if the repo uses an index.
+- A design transition is not complete until the doc itself records the current state and any linked replacement or adoption result is clear.
+
+### Design Doc Protocol
+
+Design docs record architectural truth. They do not track execution progress and they are not
+substitutes for plandocs.
+
+Create or update a design doc when work changes or establishes:
+
+- architecture
+- contracts
+- invariants
+- vocabulary
+- module boundaries
+- security or privacy posture
+- long-lived decisions that plandocs will implement against
+
+Do not create a design doc just to narrate implementation work already covered by a plandoc.
+
+Design docs must be specific enough that linked plandocs can produce structurally deterministic
+implementations. If an active design still allows materially different architectures or behavioral
+models, it is under-specified and should remain `Draft`.
+
+State meanings and minimum requirements:
+
+- `Draft`
+  - Purpose: propose or refine an architectural position.
+  - Minimum: problem is stated, constraints are visible, options are considered, a concrete decision is proposed, and major open questions are either listed or explicitly bounded.
+  - Not yet true: this is safe to treat as architectural truth for implementation.
+
+- `Active`
+  - Purpose: define the currently adopted architectural truth.
+  - Minimum: key decisions are resolved, consequences are explicit, linked plandocs can implement against it without major interpretive drift, and any superseded design is archived or clearly displaced.
+  - Requirement while in state: keep it aligned with implementation and linked plandocs; do not let code silently outrun it.
+
+- `Archived`
+  - Purpose: preserve superseded or historical architectural context.
+  - Minimum: replacement or reason for archival is clear, and the doc is no longer presented as current truth.
+
+Design doc review standard:
+
+- does the doc constrain important structural choices tightly enough?
+- are invariants and non-goals explicit?
+- are tradeoffs and rejected options visible?
+- can a plandoc implement against it without inventing architecture?
+
+If the answer to any of those is no, keep the doc in `Draft`.
+
+Relationship to plandocs:
+
+- plandocs execute against design docs
+- every non-trivial change still needs a plandoc
+- if implementation changes architecture, update the design doc first or in the same change
+- if a plandoc and design doc disagree, resolve that conflict explicitly rather than letting implementation choose silently
+
+Canonical design next-step rules:
+
+- `Draft` -> `review-design` if the proposed decision is coherent enough for adoption review; otherwise `refine-design`
+- `Active` -> no next step unless a material architecture change is required; if it is, create or refine a successor `Draft`
+- `Archived` -> no further action unless reopened for correction or historical reference maintenance
+
+Canonical design-doc transition rules:
+
+- `seed-design` -> `Draft`
+- `refine-design`
+  - stays `Draft` for proposed or successor designs until the design is reviewable
+  - may stay `Active` only for non-substantive clarifications that do not change adopted meaning
+- `review-design`
+  - stays `Draft` with findings if the design is not yet adoption-ready
+  - moves to `Active` when the design is sufficiently resolved to serve as architectural truth
+- `archive-design` -> `Archived`
+
 ## Evidence Minimum
 
 For any change beyond trivial:
@@ -213,6 +342,19 @@ For any change beyond trivial:
 - verification steps: exact commands + expected results
 - rollback: safe revert path
 - risks: what can break and blast radius
+
+## Priority And Severity
+
+- `Priority` applies to every plandoc.
+- Allowed `Priority` values:
+  - `P0` - requires immediate active handling because the business, user, or operational impact is severe right now.
+  - `P1` - important and should be scheduled soon; materially affects delivery, users, or operators.
+  - `P2` - worthwhile backlog work; useful, but not urgent.
+- `Severity` is optional and applies only to `Bug` or incident-like work.
+- Allowed `Severity` values:
+  - `S1` - outage, security issue, data loss or corruption, billing failure, or a core workflow broken with no acceptable workaround.
+  - `S2` - serious degradation or incorrect behavior with limited workaround or reduced trust.
+  - `S3` - minor bug, edge case, cosmetic issue, or low-blast-radius defect with acceptable workaround.
 
 ## Deep Refine (Required For Non-Trivial Work)
 
@@ -230,8 +372,9 @@ Deep refine minimum:
 2. Audit the relevant code/docs/tests, not just the existing plan text.
 3. Separate current behavior from intended behavior.
 4. Identify actual touch points and stale assumptions.
-5. Reclassify artifacts as plan vs design where needed.
-6. Record a canonical `Deep refine:` entry in the relevant plan `## Implementation Log`.
+5. Identify any choices that are still vague enough to produce materially different implementations.
+6. Reclassify artifacts as plan vs design where needed.
+7. Record a canonical `Deep refine:` entry in the relevant plan `## Implementation Log`.
 
 For legacy doc-space refiles, the deep refine should answer:
 
@@ -275,6 +418,12 @@ Docs-only refactors do not require a code-implementation approval gate, but they
 
 ### Design doc required sections
 
+Header (minimum):
+
+- `State`
+- `Owner`
+- `Last Updated`
+
 1. `## Problem Statement`
 2. `## Constraints / Invariants`
 3. `## Options Considered`
@@ -282,6 +431,8 @@ Docs-only refactors do not require a code-implementation approval gate, but they
 5. `## Consequences`
 6. `## Rollout / Migration`
 7. `## Security / Privacy Notes`
+
+Every required section must be filled or explicitly `N/A — reason`.
 
 ## Legacy Refile Workflow
 
@@ -321,9 +472,11 @@ Use these verbs exactly in prompts:
 - `refine-plan` = enrich or restructure an existing plandoc without implementation
 - `refine-design` = enrich or restructure an existing design doc without implementation
 - `review-plan` = review a plandoc for readiness, gaps, and protocol compliance
+- `review-design` = review a design doc for adoption readiness, gaps, and protocol compliance
 - `activate-plan` = preflight + move `Todo + Approved -> Active + Implementing`
 - `implement-plan` = execute approved plan work
 - `review-implementation` = review implementation against acceptance criteria and evidence
+- `archive-design` = move a superseded or historical design doc to `Archived`
 - `resolve-plan` = move an accepted plan to `Resolved + Resolved`
 - `sync-protocol` = update repo-local protocol docs, templates, indexes, or doc-space structure
 

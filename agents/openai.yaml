@@ -1,7 +1,7 @@
 interface:
   display_name: "Plandoc Protocol"
-  short_description: "Strict staged plandoc workflow"
-  default_prompt: "Use $plandoc-protocol to create, refine, review, activate, implement, and resolve plandocs with strict stage anchoring."
+  short_description: "Strict staged plandoc workflow and repo scaffold"
+  default_prompt: "Use $plandoc-protocol to create, refine, review, activate, implement, and resolve plandocs with strict stage anchoring, or to install the repo-local coherence scaffold."
 
 policy:
   allow_implicit_invocation: true
