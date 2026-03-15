@@ -4,6 +4,15 @@
 
 It does that with explicit stages, strict transitions, approval gates, and evidence-backed closure.
 
+## Two Modes
+
+There are only two supported ways to use this repo:
+
+- direct mode: use [SKILL.md](SKILL.md) directly through the harness; no local repo files are required
+- local mode: install the optional scaffold so a repo gets a local `.plandoc/` operating layer
+
+The product is still the skill. `.plandoc/` is just a repo-local install of the same protocol.
+
 ## Why It Works
 
 LLMs get sloppy when work has implicit state. This skill makes state explicit.
@@ -37,6 +46,8 @@ The installer also supports OpenClaw, Claude Code, and OpenCode.
 
 ## Use
 
+Direct mode:
+
 Invoke the skill and use it as a strict workflow engine for:
 
 - `seed`
@@ -49,7 +60,13 @@ Invoke the skill and use it as a strict workflow engine for:
 
 The public verb surface is intentionally small. The stage model stays rich underneath.
 
-The product is [SKILL.md](SKILL.md).
+Local mode:
+
+- install the optional scaffold
+- let `AGENTS.md` / `CLAUDE.md` point to `.plandoc/README.md`
+- keep local plan/design state under `.plandoc/`
+
+The product remains [SKILL.md](SKILL.md).
 
 ## Repo Layout
 
@@ -60,7 +77,7 @@ The product is [SKILL.md](SKILL.md).
 - `scripts/test_validate_skill.py` - validator self-tests
 - `AGENTS.md` - upstream repo working rules
 
-## Optional Extras
+## Optional Local Mode
 
 This repo also contains an optional local plandoc scaffold:
 

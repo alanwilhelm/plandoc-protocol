@@ -13,11 +13,14 @@ This protocol is a state machine for work, backed by structured docs:
 - Plandocs = execution docs
 - Design docs = architecture / strategy / decision docs
 
-## Default Mode
+## Modes
 
-Use the protocol directly first.
+There are only two supported modes:
 
-The optional local scaffold is advanced setup.
+- direct mode: use this skill directly through the harness; no local repo files are required
+- local mode: install the optional scaffold so a repo gets `.plandoc/` as its local protocol layer
+
+The skill is the product. `.plandoc/` is only the repo-local install of that protocol.
 
 ## Use This Skill When
 
@@ -46,11 +49,11 @@ The optional local scaffold is advanced setup.
 
 ## Source Of Truth
 
-1. Repo-local protocol docs if present:
+1. In local mode, repo-local protocol docs if present:
    - `.plandoc/README.md`
    - `.plandoc/plans/README.md`
    - `.plandoc/design/README.md`
-2. Otherwise use this skill’s defaults.
+2. In direct mode, or if no local scaffold is installed, use this skill’s defaults.
 
 If repo-local rules conflict with this skill, follow the repo-local rules unless the user asks to change the protocol itself.
 

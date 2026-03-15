@@ -1,6 +1,8 @@
 # Optional Local Plandoc Scaffold
 
-Use this when a repository wants the plandoc protocol installed locally instead of relying only on the global skill.
+Use this when a repository wants a local `.plandoc/` operating layer instead of relying only on the global skill.
+
+This does not create a second protocol. It installs a repo-local copy of the same protocol shape.
 
 Run:
 
