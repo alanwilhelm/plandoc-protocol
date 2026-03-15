@@ -21,7 +21,7 @@ Every design doc must include:
 
 Local conventions:
 
-- drafts live in `docs/design/drafts/`
-- adopted designs move to `docs/design/active/`
-- superseded designs move to `docs/design/archived/`
+- drafts live in `.plandoc/design/drafts/`
+- adopted designs move to `.plandoc/design/active/`
+- superseded designs move to `.plandoc/design/archived/`
 - link each non-trivial plandoc to the design doc that defines its architecture

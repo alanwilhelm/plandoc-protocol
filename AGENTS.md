@@ -10,6 +10,7 @@ This is the real upstream skill repo for `plandoc-protocol`.
 ## Working Rules
 - Use SSH git auth for clone/fetch/push. `gh` CLI auth may be broken and is not required.
 - When changing the protocol itself, update `SKILL.md` first. Update `agents/openai.yaml` only if the invocation surface or wording must change.
+- Keep the repo centered on the skill itself. Treat the optional local scaffold as support, not the primary product.
 - Keep the repo portable for Codex/OpenClaw installs. Do not add dependencies to the validation path unless required.
 
 ## Validation

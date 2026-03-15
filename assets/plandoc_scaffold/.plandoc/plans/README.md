@@ -26,6 +26,6 @@ Every plandoc must include:
 Local conventions:
 
 - number plandocs sequentially within this workspace
-- keep active execution docs out of the root; use the canonical lifecycle folders
-- treat repo-local protocol docs as the source of truth over generic memory
+- keep active execution docs out of the root; use the lifecycle folders
+- treat `.plandoc/` as the local protocol source of truth over generic memory
 - add a `Deep refine:` entry before approval for non-trivial work

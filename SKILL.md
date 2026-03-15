@@ -1,6 +1,6 @@
 ---
 name: plandoc-protocol
-description: High-effectiveness Plandoc + Design Doc protocol for planning, deep-refining, refiling legacy doc spaces, executing plan state transitions with approval gates, and installing repo-local coherence scaffolds.
+description: State-machine protocol for reliable LLM planning, execution, review, and closure.
 ---
 
 # Plandoc Protocol (Optimized)
@@ -13,24 +13,18 @@ This protocol is a state machine for work, backed by structured docs:
 - Plandocs = execution docs
 - Design docs = architecture / strategy / decision docs
 
+## Default Mode
+
+Use the protocol directly first.
+
+The optional local scaffold is advanced setup.
+
 ## Use This Skill When
 
 - the user wants a new plan, design doc, or protocol sync
 - a repo has legacy docs that need to be refactored into a cleaner plan/design layout
 - work is large, risky, multi-step, or needs auditability
 - a plan needs review, refinement, activation, implementation, verification, or state movement
-- a repo needs the local coherence scaffold installed so plandocs, design docs, indices, and root control docs reinforce each other
-
-## Repo Coherence Bootstrap
-
-When the user wants a repository to have the same level of repo-local plandoc coherence, read
-`references/repo_coherence.md` and use:
-
-```bash
-python3 scripts/install_repo_coherence.py --repo-root /path/to/repo --project-name ProjectName
-```
-
-Use `--force` only when replacing an existing scaffold intentionally.
 
 ## Prime Directive
 
@@ -53,8 +47,9 @@ Use `--force` only when replacing an existing scaffold intentionally.
 ## Source Of Truth
 
 1. Repo-local protocol docs if present:
-   - `docs/plans/README.md`
-   - `docs/design/README.md`
+   - `.plandoc/README.md`
+   - `.plandoc/plans/README.md`
+   - `.plandoc/design/README.md`
 2. Otherwise use this skill’s defaults.
 
 If repo-local rules conflict with this skill, follow the repo-local rules unless the user asks to change the protocol itself.
@@ -77,11 +72,11 @@ that a manager or lead enforces across workers.
 
 Before editing or moving docs, classify each artifact:
 
-- Put it in `docs/plans/` if it is primarily about execution state, verification, sequencing, and delivery.
-- Put it in `docs/design/` if it is primarily about architecture, strategy, constraints, or decisions.
+- Put it in `.plandoc/plans/` if it is primarily about execution state, verification, sequencing, and delivery.
+- Put it in `.plandoc/design/` if it is primarily about architecture, strategy, constraints, or decisions.
 - If the intake is primarily an unresolved goal, initiative, epic, or architecture/tradeoff question, establish the design truth first, then create linked plandocs for execution work.
 
-Do not leave active plandocs directly in `docs/plans/` root unless repo-local protocol explicitly says so.
+Do not leave active plandocs directly in `.plandoc/plans/` root unless repo-local protocol explicitly says so.
 
 ## Intake Patterns
 
@@ -109,21 +104,21 @@ Rules of thumb:
 
 ### Plandocs
 
-- `docs/plans/todo/NNNN-...md`
-- `docs/plans/active/NNNN-...md`
-- `docs/plans/qa/NNNN-...md`
-- `docs/plans/resolved/NNNN-...md`
-- `docs/plans/icebox/NNNN-...md`
-- `docs/plans/templates/`
-- `docs/plans/_index.md`
+- `.plandoc/plans/todo/NNNN-...md`
+- `.plandoc/plans/active/NNNN-...md`
+- `.plandoc/plans/qa/NNNN-...md`
+- `.plandoc/plans/resolved/NNNN-...md`
+- `.plandoc/plans/icebox/NNNN-...md`
+- `.plandoc/plans/templates/`
+- `.plandoc/plans/_index.md`
 
 ### Design docs
 
-- `docs/design/drafts/NNNN-...md`
-- `docs/design/active/NNNN-...md`
-- `docs/design/archived/NNNN-...md`
-- `docs/design/templates/`
-- `docs/design/_index.md`
+- `.plandoc/design/drafts/NNNN-...md`
+- `.plandoc/design/active/NNNN-...md`
+- `.plandoc/design/archived/NNNN-...md`
+- `.plandoc/design/templates/`
+- `.plandoc/design/_index.md`
 
 ## States + Transitions
 
@@ -220,35 +215,42 @@ Required transition mechanics:
 
 When the user says "do the next thing", use this table:
 
-- `Todo + Seeded` -> `refine-plan`
-- `Todo + Refined` -> `review-plan`
-- `Todo + Approved` -> `activate-plan`
-- `Active + Implementing` -> `implement-plan`
-- `QA + Implemented` -> `review-implementation`
-- `QA + Reviewed` -> `resolve-plan`
+- `Todo + Seeded` -> `refine`
+- `Todo + Refined` -> `review`
+- `Todo + Approved` -> `activate`
+- `Active + Implementing` -> `implement`
+- `QA + Implemented` -> `verify`
+- `QA + Reviewed` -> `resolve`
 - `Blocked + <any>` -> unblock first; do not guess
 - `Resolved + Resolved` -> no further action unless the plan is reopened
 
 ### Canonical Transition Rules
 
-- `seed-plan` -> `Todo + Seeded`
-- `refine-plan` -> `Todo + Refined`
-- `review-plan` -> either stay `Todo + Refined` with findings or move to `Todo + Approved`
-- `activate-plan` -> `Active + Implementing`
-- `implement-plan`
+- `seed`
+  - for plandocs -> `Todo + Seeded`
+  - for design docs -> `Draft`
+- `refine`
+  - for plandocs -> `Todo + Refined`
+  - for design docs -> stays `Draft` for proposed or successor designs until the design is reviewable
+  - for active design docs -> may stay `Active` only for non-substantive clarifications that do not change adopted meaning
+- `review`
+  - for plandocs -> either stay `Todo + Refined` with findings or move to `Todo + Approved`
+  - for design docs -> either stay `Draft` with findings or move to `Active`
+- `activate` -> `Active + Implementing`
+- `implement`
   - stays `Active + Implementing` while work remains
   - moves to `QA + Implemented` when implementation is ready for verification
-- `review-implementation`
+- `verify`
   - stays or returns to `Active + Implementing` if fixes are required
   - moves to `QA + Reviewed` when evidence supports acceptance
-- `resolve-plan` -> `Resolved + Resolved`
+- `resolve` -> `Resolved + Resolved`
 
 ### Doc-Only Exception
 
 For research, protocol sync, or docs-only work with no implementation phase:
 
 - allowed flow: `Seeded -> Refined -> Approved -> Resolved`
-- `resolve-plan` may move `Todo + Approved` directly to `Resolved + Resolved` if verification is captured inline
+- `resolve` may move `Todo + Approved` directly to `Resolved + Resolved` if verification is captured inline
 - record clearly in `## Verification & Monitoring` why no implementation/QA phase exists
 
 ### Design doc states
@@ -262,7 +264,7 @@ For research, protocol sync, or docs-only work with no implementation phase:
 Every design doc must be anchored in exactly one current state.
 
 - Do not leave a design doc "between states" or implied by prose alone.
-- The header `State`, folder placement, and `docs/design/_index.md` entries must agree if the repo uses an index.
+- The header `State`, folder placement, and `.plandoc/design/_index.md` entries must agree if the repo uses an index.
 - A design transition is not complete until the doc itself records the current state and any linked replacement or adoption result is clear.
 
 ### Design Doc Protocol
@@ -320,20 +322,20 @@ Relationship to plandocs:
 
 Canonical design next-step rules:
 
-- `Draft` -> `review-design` if the proposed decision is coherent enough for adoption review; otherwise `refine-design`
+- `Draft` -> `review` if the proposed decision is coherent enough for adoption review; otherwise `refine`
 - `Active` -> no next step unless a material architecture change is required; if it is, create or refine a successor `Draft`
 - `Archived` -> no further action unless reopened for correction or historical reference maintenance
 
 Canonical design-doc transition rules:
 
-- `seed-design` -> `Draft`
-- `refine-design`
+- `seed` -> `Draft`
+- `refine`
   - stays `Draft` for proposed or successor designs until the design is reviewable
   - may stay `Active` only for non-substantive clarifications that do not change adopted meaning
-- `review-design`
+- `review`
   - stays `Draft` with findings if the design is not yet adoption-ready
   - moves to `Active` when the design is sufficiently resolved to serve as architectural truth
-- `archive-design` -> `Archived`
+- archiving a superseded design is a maintenance action, not a primary public verb; move the design doc to `Archived` when its successor becomes authoritative
 
 ## Evidence Minimum
 
@@ -438,7 +440,7 @@ Every required section must be filled or explicitly `N/A — reason`.
 
 When refiling an existing docs space:
 
-1. Inventory all current docs under `docs/plans/` and `docs/design/`.
+1. Inventory all current docs under `.plandoc/plans/`, `.plandoc/design/`, and any legacy `docs/plans/` or `docs/design/`.
 2. Classify each file as plandoc vs design doc.
 3. Preserve numbering when it helps trace history.
 4. Move files into state folders, not root, unless repo-local rules say otherwise.
@@ -451,14 +453,14 @@ When refiling an existing docs space:
 
 Default staged flow:
 
-`seed -> refine -> review -> activate -> implement -> review -> resolve`
+`seed -> refine -> review -> activate -> implement -> verify -> resolve`
 
 - `seed` = create the first correct plan or design doc in the right folder and state
 - `refine` = deepen or clean up an existing plan/design doc after reading the relevant sources
 - first `review` = review the plan/design for readiness
 - `activate` = preflight + move `Todo + Approved -> Active + Implementing`
 - `implement` = execute the approved plan
-- second `review` = review implementation and evidence
+- `verify` = review implementation and evidence against acceptance criteria
 - `resolve` = move the plan to `Resolved + Resolved`
 
 Use `sync-protocol` when the task is about the protocol itself, templates, indexes, or refiling the doc space.
@@ -467,18 +469,17 @@ Use `sync-protocol` when the task is about the protocol itself, templates, index
 
 Use these verbs exactly in prompts:
 
-- `seed-plan` = create a new plandoc in the correct state folder with the minimum correct structure
-- `seed-design` = create a new design doc in the correct design folder with the minimum correct structure
-- `refine-plan` = enrich or restructure an existing plandoc without implementation
-- `refine-design` = enrich or restructure an existing design doc without implementation
-- `review-plan` = review a plandoc for readiness, gaps, and protocol compliance
-- `review-design` = review a design doc for adoption readiness, gaps, and protocol compliance
-- `activate-plan` = preflight + move `Todo + Approved -> Active + Implementing`
-- `implement-plan` = execute approved plan work
-- `review-implementation` = review implementation against acceptance criteria and evidence
-- `archive-design` = move a superseded or historical design doc to `Archived`
-- `resolve-plan` = move an accepted plan to `Resolved + Resolved`
+- classify the target first: plandoc, design doc, or protocol/doc-space work
+- `seed` = create a new plandoc or design doc in the correct folder and initial state
+- `refine` = enrich or restructure an existing plandoc or design doc without implementation
+- `review` = review a plandoc or design doc for readiness, gaps, and protocol compliance
+- `activate` = preflight + move `Todo + Approved -> Active + Implementing`
+- `implement` = execute approved plan work
+- `verify` = review implementation against acceptance criteria and evidence
+- `resolve` = move an accepted plan to `Resolved + Resolved`
 - `sync-protocol` = update repo-local protocol docs, templates, indexes, or doc-space structure
+
+Do not expose plan-specific and design-specific verb variants unless a harness absolutely requires them. The point of the public verb surface is to stay small while the stage model stays explicit.
 
 If the user asks to refile, normalize, or restructure a plan/design space, treat it as `sync-protocol` work and perform a deep refine first.
 
@@ -488,6 +489,18 @@ Treat GitHub Issues as intake/public surface; plandocs remain the execution sour
 
 - Every non-trivial plandoc should link `GH#N` when applicable.
 - Large, risky, or multi-PR issues should have plandocs.
+
+## Optional Local Scaffold
+
+Use this only when a repo explicitly wants local plandoc protocol docs installed as an operating layer.
+
+Read `references/plandoc_scaffold.md` and use:
+
+```bash
+python3 scripts/install_plandoc_scaffold.py --repo-root /path/to/repo --project-name ProjectName
+```
+
+Use `--force` only when replacing an existing scaffold intentionally.
 
 ## Escalation Triggers
 
