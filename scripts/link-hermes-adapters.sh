@@ -11,8 +11,8 @@ ${HERMES_HOME:-$HOME/.hermes}/skills/software-development.
 Options:
   --mode plan         Print intended changes without mutating.
   --mode apply        Apply symlink changes.
-  --replace-existing  Move an existing non-symlink skill directory aside before
-                      linking. The backup path receives a timestamp suffix.
+  --replace-existing  Move an existing non-symlink skill directory outside the
+                      live skill tree before linking.
 USAGE
 }
 
@@ -54,6 +54,7 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source_dir="$repo_root/hermes"
 hermes_home="${HERMES_HOME:-$HOME/.hermes}"
 target_dir="$hermes_home/skills/software-development"
+backup_root="$hermes_home/skills-legacy-backups/software-development"
 
 if [ ! -d "$source_dir" ]; then
   printf 'Missing adapter root: %s\n' "$source_dir" >&2
@@ -63,6 +64,7 @@ fi
 printf 'repo_root=%s\n' "$repo_root"
 printf 'source_dir=%s\n' "$source_dir"
 printf 'target_dir=%s\n' "$target_dir"
+printf 'backup_root=%s\n' "$backup_root"
 printf 'mode=%s\n' "$mode"
 printf 'replace_existing=%s\n' "$replace_existing"
 
@@ -73,6 +75,7 @@ fi
 
 if [ "$mode" = "apply" ]; then
   mkdir -p "$target_dir"
+  mkdir -p "$backup_root"
 fi
 
 link_one() {
@@ -100,7 +103,7 @@ link_one() {
       printf 'blocked=%s exists and is not a symlink\n' "$dest" >&2
       exit 1
     fi
-    backup="${dest}.legacy-dir-$(date -u +%Y%m%dT%H%M%SZ)"
+    backup="$backup_root/${name}.legacy-dir-$(date -u +%Y%m%dT%H%M%SZ)"
     printf 'move_existing=%s -> %s\n' "$dest" "$backup"
     printf 'link=%s -> %s\n' "$dest" "$source_path"
     if [ "$mode" = "apply" ]; then

@@ -76,7 +76,8 @@ Checked local linkers:
 Run linkers in `--mode plan` before `--mode apply`. The Hermes linker targets
 `~/.hermes/skills/software-development`. Existing non-symlink Hermes skill
 directories are not replaced unless `--replace-existing` is passed; replacement
-moves the old directory aside with a timestamped backup name.
+moves the old directory outside the live skill tree under
+`~/.hermes/skills-legacy-backups/`.
 
 ## Current Included Skills
 
