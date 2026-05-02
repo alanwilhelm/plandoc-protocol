@@ -1,0 +1,7 @@
+interface:
+  display_name: "Plandoc Protocol"
+  short_description: "Waterproof plandoc protocol with central design anchors and durable review artifacts"
+  default_prompt: "Use $plandoc-protocol as the portable artifact and lifecycle authority for plandocs, design anchors, control boards, durable comms, review gates, cut/slice vocabulary, and proof-backed closure. Treat active design docs as architectural blueprints and central living anchors; require every non-trivial plandoc to name a canonical design anchor and maintain a Design Anchor Review before approval, activation, QA, or resolution. Do not use this skill for live lane routing; use workspace-lane-control for that."
+
+policy:
+  allow_implicit_invocation: true
