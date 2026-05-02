@@ -267,6 +267,33 @@ people; omit internal workflow history, apology language, reviewer-specific
 notes, and long explanations of why the doc exists; keep lock/read-only warnings
 short and actionable.
 
+Scientific admission rule: every non-trivial plandoc is a falsifiable execution
+contract. Before approval, activation, worker routing, live mutation, deploy,
+GitHub closeout, or proof claiming, it must name the governing design anchor,
+the one owner, the one primary outcome, the exact stop condition, and the proof
+target that will decide whether the slice advanced.
+
+Protocol failure trigger: if the user says the work has lost the plot, drifted,
+is sloppy, or is a protocol/control/plandoc failure, stop execution and run
+fail-closed realignment. Do not continue implementation while the board, anchor,
+governing plandoc, owner, blocker, or proof target is suspect.
+
+Required design-anchor review matrix for non-trivial active work:
+
+- `permits`: what the active anchor explicitly allows for this slice
+- `forbids`: what the active anchor excludes or keeps out of scope
+- `current evidence`: current code, docs, tests, scripts, DB, Kubernetes,
+  browser, issue, or proof facts inspected for this slice
+- `contradictions or gaps`: stale claims, missing meaning, or proof/code drift
+- `decision`: whether the plandoc is admitted, blocked, or requires anchor
+  repair before execution
+
+Success claim gate: `success`, `done`, `clean`, `deployed`, `aligned`, and
+`ready` are protocol states, not reassuring language. Use them only after fresh
+verification evidence satisfies the acceptance criteria. Otherwise record the
+state as `blocked`, `needs-refine`, `approval-gated`, or `partially verified`
+and name the missing evidence.
+
 Blueprint rule: when a user asks for architecture, system shape, information
 architecture, product-object relationships, lifecycle boundaries, route/schema
 contracts, deployment topology, proof semantics, or "how this should work",
@@ -826,6 +853,14 @@ Every plandoc must be anchored in exactly one current stage.
 - The header `Status` + `State`, folder placement, and `## Implementation Log` must agree.
 - A stage transition is not complete until the doc itself records it.
 - If the evidence does not support the next stage, keep the plandoc where it is.
+
+Fail-closed hold rule: a control hold is not a plandoc `Status` or `State`.
+When an `Active + Implementing` cut is paused because the board, admission
+contract, or protocol layer must be repaired, keep the plandoc
+`Active + Implementing` unless the work itself has a true blocker. Record the
+hold in the control board lane guard and in `## Implementation Log`. Do not
+move active work backward to `Todo`, and do not mark it `Blocked` merely
+because live mutation is temporarily forbidden by protocol repair.
 
 Stage definitions and minimum requirements:
 
