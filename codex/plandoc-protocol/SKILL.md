@@ -241,6 +241,32 @@ bury durable architecture, vocabulary, ownership, schema, route, security,
 rollout, or acceptance meaning only in a plandoc, worker prompt, issue comment,
 test, or code patch.
 
+Important contract AI lock rule: important contracts are read-only for AI and
+agent workers by default once they are marked locked, canonical, or active
+contract truth. Important contracts include auth/session/token contracts, route
+and endpoint contracts, schema/data contracts, runtime/integration contracts,
+deployment contracts, observability/proof contracts, and any design or
+integration doc that defines producer/consumer behavior across a repo, service,
+package, API, UI, or agent boundary. AI and agent workers may read locked
+contracts, cite them, implement against them, and report mismatches. They must
+not mutate a locked contract, weaken its language, rename its fields, change its
+route or token shape, move its source of truth, or create competing contract
+meaning without an explicit unlock from the human operator. An unlock request
+must name the exact contract path and section, the proposed mutation, the reason
+current code/proof requires it, the producer and consumer surfaces affected, and
+the verification or rollback plan.
+
+Public doc formatting rule: public or reviewer-facing docs must use terse,
+current, role-neutral language. Do not name individual reviewers, teammates, or
+operators unless the person is the subject of the doc or an explicit owner field
+is required. For public contract, API, integration, route, auth, schema, or setup
+docs, open with the current status, last verified date when useful, and exact
+consumer-facing shape; prefer short paragraphs, typed tables, and compact
+checklists over narrative rationale; name stable roles or surfaces instead of
+people; omit internal workflow history, apology language, reviewer-specific
+notes, and long explanations of why the doc exists; keep lock/read-only warnings
+short and actionable.
+
 Blueprint rule: when a user asks for architecture, system shape, information
 architecture, product-object relationships, lifecycle boundaries, route/schema
 contracts, deployment topology, proof semantics, or "how this should work",
@@ -1052,6 +1078,11 @@ block does not apply, either omit it when clearly irrelevant or write
     - operations this design explicitly rejects;
     - decisions intentionally deferred;
     - the gate required before deferred behavior can move into scope.
+
+If any block defines an important producer/consumer contract, the design doc
+must state whether that contract is locked. Locked contracts must explicitly say
+they are read-only for AI and agent workers until the human operator grants an
+explicit unlock for a named path and section.
 
 Use typed tables when a block defines a contract surface. Do not describe
 routes, schemas, env vars, or states only in prose when a table would remove
